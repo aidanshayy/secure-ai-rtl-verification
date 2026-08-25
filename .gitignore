@@ -1,0 +1,21 @@
+.venv/
+.sc-tools/
+.sc-cache/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+
+# SiliconCompiler and EDA output
+build/
+results/**/*.gds
+results/**/*.oas
+results/**/*.def
+results/**/*.lef
+results/**/*.odb
+results/**/*.vcd
+results/**/*.fst
+results/**/*.log
+
+# Local scratch
+.DS_Store
+*.swp
