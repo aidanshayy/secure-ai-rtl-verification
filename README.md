@@ -42,10 +42,17 @@ Generated tool installs, PDK caches, virtualenvs, build directories, and large E
 ```bash
 ./scripts/setup.sh
 source .venv/bin/activate
-source .sc-tools/oss-cad-suite/environment
+source .sc-tools/oss-cad-suite/environment  # optional fallback bundle
 ```
 
-The preferred native SiliconCompiler path is `sc-install -group asic digital-simulation`. On this WSL2 host, that path is blocked because the official Ubuntu install scripts require `sudo apt-get` for prerequisites. Docker is also unavailable inside this distro until Docker Desktop WSL integration is enabled.
+The preferred native SiliconCompiler path is `sc-install -group asic digital-simulation`.
+On this WSL2 host, native `sc-install` is blocked from this non-interactive session because the official Ubuntu install scripts require `sudo apt-get` for prerequisites.
+
+The working path here is the official SiliconCompiler Docker runner:
+
+```bash
+docker run --rm ghcr.io/siliconcompiler/sc_runner:v0.38.2 openroad -version
+```
 
 ## Check The Environment
 
@@ -57,7 +64,15 @@ This verifies Python, SiliconCompiler import/version, executable discovery, Veri
 
 ## Run The Example Flow
 
-Once OpenROAD and KLayout are available through `sc-install`, Docker, or another local installation:
+Run through the Docker scheduler:
+
+```bash
+.venv/bin/python flows/example_flow.py \
+  --scheduler docker \
+  --docker-image ghcr.io/siliconcompiler/sc_runner:v0.38.2
+```
+
+If OpenROAD, OpenSTA, and KLayout are available natively through `sc-install` or another local installation:
 
 ```bash
 PATH="$PWD/.sc-tools/bin:$PWD/.sc-tools/oss-cad-suite/bin:$PATH" .venv/bin/python flows/example_flow.py
@@ -65,7 +80,7 @@ PATH="$PWD/.sc-tools/bin:$PWD/.sc-tools/oss-cad-suite/bin:$PATH" .venv/bin/pytho
 
 The flow uses SiliconCompiler `0.38.2`, FreePDK45/Nangate45 via `lambdapdk`, and a tiny synthesizable counter design.
 
-SiliconCompiler writes logs, reports, manifests, intermediate artifacts, metrics, and final layout output under `build/`. Start by inspecting `build/tiny_counter/job0/` after a run.
+SiliconCompiler writes logs, reports, manifests, intermediate artifacts, metrics, and final layout output under `build/`. Start by inspecting `build/tiny_counter/job0/` after a run. The Docker-validated example produces `build/tiny_counter/job0/write.gds/0/outputs/tiny_counter.gds.gz`.
 
 ## Validation Status
 

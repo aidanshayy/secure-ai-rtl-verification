@@ -40,7 +40,7 @@ for tool in verilator yosys openroad sta klayout sv2v; do
     else
         printf '%-10s %s\n' "${tool}" "MISSING"
         case "${tool}" in
-            openroad|klayout|sta) ;;
+            openroad|klayout|sta|sv2v) ;;
             *) status=1 ;;
         esac
     fi
@@ -52,6 +52,21 @@ have yosys && yosys -V || true
 have openroad && openroad -version || true
 have sta && sta -version || true
 have klayout && klayout -v || true
+
+section "Docker Runner"
+SC_DOCKER_IMAGE="${SC_DOCKER_IMAGE:-ghcr.io/siliconcompiler/sc_runner:v0.38.2}"
+if have docker; then
+    if docker info >/dev/null 2>&1; then
+        echo "Docker daemon reachable"
+        echo "SiliconCompiler runner: ${SC_DOCKER_IMAGE}"
+        docker run --rm "${SC_DOCKER_IMAGE}" openroad -version || status=1
+    else
+        echo "Docker client found, but the daemon/socket is not reachable from this shell."
+        echo "If using Docker Desktop, enable WSL integration for this distro or fix /var/run/docker.sock permissions."
+    fi
+else
+    echo "Docker client not found"
+fi
 
 section "RTL Checks"
 if have verilator; then
@@ -73,8 +88,9 @@ if have openroad && have klayout; then
     echo "OpenROAD and KLayout are available. Run:"
     echo "  PATH=\"${ROOT}/.sc-tools/bin:${ROOT}/.sc-tools/oss-cad-suite/bin:\$PATH\" .venv/bin/python flows/example_flow.py"
 else
-    echo "Full RTL-to-GDSII flow is not ready on this host."
-    echo "Missing OpenROAD and/or KLayout. Native sc-install requires sudo; Docker is the supported fallback when WSL integration is enabled."
+    echo "OpenROAD and/or KLayout are not available natively."
+    echo "Docker is the supported fallback when WSL integration is enabled. Run:"
+    echo "  .venv/bin/python flows/example_flow.py --scheduler docker --docker-image ${SC_DOCKER_IMAGE}"
 fi
 
 exit "${status}"

@@ -12,7 +12,7 @@
 - Kernel: `6.6.87.2-microsoft-standard-WSL2`
 - Python: `3.12.3`
 - Native limitation observed here: non-interactive `sudo` is unavailable, so the official `sc-install` Ubuntu scripts cannot install apt prerequisites.
-- Docker limitation observed here: Docker Desktop's WSL integration is not enabled for this distro, so SiliconCompiler's Docker scheduler cannot be used from this session.
+- Docker Desktop WSL integration is now reachable from this distro when run with Docker socket permissions.
 
 ## Installed In This Repo
 
@@ -23,6 +23,22 @@
 - OSS CAD Suite archive SHA-256: `9d7f79975ef624e1119fc9690fd9b9839b67026925aff3e2a1192d861b8dbb7c`
 
 The OSS CAD Suite fallback provides working Verilator and Yosys here. It does not provide OpenROAD or KLayout in this release, so it cannot complete the SiliconCompiler physical implementation flow by itself.
+
+## Docker Tool Path
+
+The verified OpenROAD path is the official SiliconCompiler runner image:
+
+```bash
+docker run --rm ghcr.io/siliconcompiler/sc_runner:v0.38.2 openroad -version
+```
+
+Observed OpenROAD version from that image:
+
+```text
+26Q3-411-ga65b06e763
+```
+
+The image also provides the OpenSTA and KLayout executables needed by the FreePDK45/Nangate45 example flow.
 
 ## Activation
 
@@ -39,7 +55,15 @@ Check the environment:
 ./scripts/check_environment.sh
 ```
 
-Run the SiliconCompiler example flow when OpenROAD and KLayout are available:
+Run the SiliconCompiler example flow through Docker:
+
+```bash
+.venv/bin/python flows/example_flow.py \
+  --scheduler docker \
+  --docker-image ghcr.io/siliconcompiler/sc_runner:v0.38.2
+```
+
+Run the same flow locally when OpenROAD and KLayout are available on the WSL `PATH`:
 
 ```bash
 PATH="$PWD/.sc-tools/bin:$PWD/.sc-tools/oss-cad-suite/bin:$PATH" .venv/bin/python flows/example_flow.py
