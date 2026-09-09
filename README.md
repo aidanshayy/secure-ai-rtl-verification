@@ -1,27 +1,59 @@
-# Secure AI-Assisted RTL Verification Baseline
+# Secure AI-Assisted RTL Verification Research Repository
 
-This repository is the base environment for research into secure AI-assisted RTL verification and EDA workflows.
+This repository is a research environment for secure, AI-assisted RTL
+verification. It is intended to support multiple RTL designs, verification
+environments, tools, experiments, and agent workflows rather than a single
+production design flow.
 
 ## Current Phase
 
-Phase 0 - Establish and understand the baseline SiliconCompiler RTL-to-GDSII workflow.
+Phase 0 - Establish a reproducible RTL-verification baseline and define the
+interfaces between verification tools, AI agents, and protected design data.
 
-The current repository intentionally contains only a small example design, setup scripts, environment checks, a minimal SiliconCompiler flow, and documentation for operating the Docker-backed EDA environment. It does not yet implement an AI integration, policy harness, formal-verification research system, or any cloud service.
+The repository currently contains a small example design, setup scripts,
+environment checks, a minimal SiliconCompiler RTL-to-GDSII flow, and operating
+documentation. The full RTL-to-GDSII flow is a supporting baseline for learning
+and for studying downstream effects of RTL decisions; it is not the primary
+scope of the project. The repository does not yet implement a complete AI
+integration, policy harness, formal-verification research system, or cloud
+service.
+
+See [AGENTS.md](AGENTS.md) for guidance intended for Codex and other agents
+working in this repository.
 
 ## Research Motivation
 
-This project will eventually support research into secure AI-assisted third-party RTL verification. The envisioned use case is a verification contractor receiving proprietary RTL and verification collateral from a semiconductor company and using AI agents such as Codex, ChatGPT, Claude, or local models to accelerate verification work.
+This project supports research into secure AI-assisted RTL verification. The
+envisioned use case is a verification engineer or contractor receiving
+proprietary RTL and verification collateral from a semiconductor company and
+using AI agents such as Codex, ChatGPT, Claude, or local models to accelerate
+verification work without casually exposing sensitive design information.
 
 A future AI harness may sit between the LLM and the EDA environment and enforce policies governing what RTL or design information may be exposed externally, what must remain local, anonymization of EDA logs and reports, filesystem and tool permissions, model-specific access policies, auditability, secure EDA execution, and formal or functional verification workflows.
 
-SiliconCompiler and its open-source tool ecosystem provide the initial EDA orchestration baseline. The research emphasis remains verification and security, not AI-driven physical-design optimization.
+SiliconCompiler and its open-source tool ecosystem provide the EDA
+orchestration baseline. The research emphasis is RTL verification and security,
+not AI-driven physical-design optimization.
 
-Future phases may examine SiliconCompiler-captured data, simulation and lint results, metrics and manifests, formal verification, test generation, failure diagnosis, AI tool interfaces, data-classification policies, secure context filtering, human-in-the-loop verification, and agentic verification workflows.
+Research areas may include:
+
+- SystemVerilog Assertions (SVA) generation and review.
+- UVM and testbench scaffolding.
+- Test planning, stimulus generation, and simulation triage.
+- Functional, code, assertion, and formal coverage analysis.
+- Log and failure debugging across simulators, linters, synthesis, and formal tools.
+- Design understanding, documentation, dependency mapping, and change impact analysis.
+- Secure AI context preparation, anonymization, policy enforcement, and auditability.
+- Centaur-style workflows that coordinate verification tools, agents, artifacts,
+  and human approval points.
+- SiliconCompiler-backed experiments that connect RTL verification findings to
+  synthesis or implementation behavior.
 
 ## Repository Layout
 
 ```text
 .
+├── AGENTS.md
 ├── README.md
 ├── requirements.txt
 ├── scripts/
@@ -35,6 +67,7 @@ Future phases may examine SiliconCompiler-captured data, simulation and lint res
 └── docs/
     ├── environment.md
     ├── research_direction.md
+    ├── scope.md
     ├── usage.md
     └── validation.md
 ```
@@ -98,7 +131,9 @@ See `docs/usage.md` for command recipes covering:
 
 ## Research Direction
 
-See `docs/research_direction.md` for the planned AI harness direction, including anonymized log/report extraction, RTL-first issue triage, human-in-the-loop verification, agentic workflows, multi-tool interfaces, and security questions around what EDA data can safely reach an LLM.
+See `docs/scope.md` and `docs/research_direction.md` for the project scope,
+verification research themes, Centaur workflow direction, AI-agent concepts,
+and security questions around what EDA data can safely reach an LLM.
 
 ## Validation Status
 

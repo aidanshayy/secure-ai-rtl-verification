@@ -1,12 +1,55 @@
 # Research Direction
 
-This project is a baseline for secure AI-assisted RTL verification and EDA workflow research.
+This project is primarily about secure AI-assisted RTL verification research.
+The repository may include many designs and workflows, but each addition
+should help answer a verification question or make a verification experiment
+more reproducible.
 
-The near-term direction is to build an AI harness that extracts useful but anonymized information from EDA logs, reports, manifests, and metrics, sends only approved context to an LLM, and collects meaningful engineering feedback. The first target is helping verification engineers identify RTL issues. Over time, the same harness can expand toward the broader RTL-to-GDSII process.
+The near-term direction is to build small, measurable agent workflows that
+extract useful but approved information from RTL and verification artifacts,
+send only necessary context to an AI model, and collect structured engineering
+feedback. SiliconCompiler remains useful for orchestrating reproducible EDA
+steps and for connecting RTL findings to synthesis or implementation behavior,
+but broader physical-design automation is secondary.
+
+## Core Research Themes
+
+The repository should be able to host experiments in:
+
+- SVA generation, mutation, explanation, and human review.
+- UVM/testbench scaffolding and stimulus suggestions.
+- Coverage-gap analysis and targeted test or assertion proposals.
+- Simulation, lint, formal, synthesis, and regression-log debugging.
+- Design understanding: module summaries, interfaces, protocols, state
+  machines, dependencies, and change impact.
+- Verification planning and traceability from requirements to checks.
+- Agent evaluation: correctness, usefulness, reproducibility, time saved,
+  false positives, missed issues, and unsafe suggestions.
+
+## Centaur Workflow Direction
+
+Centaur is a working direction for a coordinated verification workflow. A
+typical experiment may look like:
+
+```text
+RTL and verification intent
+        -> context preparation and policy checks
+        -> agent proposes plan, assertions, tests, or diagnosis
+        -> human approval where required
+        -> simulator / formal / lint / coverage tools
+        -> artifact and result extraction
+        -> agent analyzes evidence and proposes next action
+        -> human records the conclusion
+```
+
+Each workflow should make its tool boundaries, permissions, state, artifacts,
+and approval gates visible. The goal is not unrestricted autonomy; it is a
+repeatable way to study how agents can help verification engineers while
+keeping evidence and accountability clear.
 
 ## Initial Research Thesis
 
-EDA tools already emit rich diagnostic information:
+Verification and EDA tools already emit rich diagnostic information:
 
 - lint warnings
 - synthesis warnings
@@ -19,14 +62,19 @@ EDA tools already emit rich diagnostic information:
 - DRC and antenna-repair results
 - clock-tree and hold/setup timing reports
 - power, IR-drop, and congestion summaries
+- simulation transcripts and waveforms
+- assertion failures and formal counterexamples
+- code, functional, and assertion coverage
+- UVM reports, objections, phase activity, and scoreboard failures
 
 These artifacts are useful to engineers, but they may also contain sensitive design information. The harness should treat logs and reports as data that must be classified, filtered, summarized, and audited before it reaches any external or less-trusted AI model.
 
-## Phase 1 Focus
+## Phase 1 Focus: RTL Verification Assistant
 
 The first useful harness should focus on RTL and verification-facing issues:
 
-- parse Verilator, Yosys, SiliconCompiler, OpenSTA, and OpenROAD logs
+- parse simulator, Verilator, formal, UVM, Yosys, SiliconCompiler, OpenSTA,
+  and OpenROAD logs as appropriate to an experiment
 - extract errors, warnings, metrics, and suspect design symptoms
 - map tool messages back to source files, modules, constraints, or flow stages
 - anonymize module names, signal names, file paths, hierarchy, and proprietary values where needed
@@ -53,8 +101,8 @@ After the RTL-first workflow is stable, the harness can expand into more of the 
 - identify physical-design symptoms that point back to RTL or constraints
 - connect screenshots and report summaries to explain APR outcomes
 - generate human-review checklists
-- support formal-verification and simulation artifacts
-- integrate multiple tools behind a policy-controlled interface
+- support formal-verification, simulation, assertion, and coverage artifacts
+- integrate multiple verification tools behind a policy-controlled interface
 
 ## Human In The Loop
 
@@ -111,4 +159,3 @@ Visuals are useful for intuition and sanity checks. Logs and reports usually dri
 ## Guiding Principle
 
 The project should make AI assistance useful without making sensitive design exposure casual. The harness should be designed around local-first data collection, explicit policy, reversible anonymization where appropriate, human approval points, and reproducible EDA runs.
-

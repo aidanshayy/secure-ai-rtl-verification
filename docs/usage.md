@@ -2,6 +2,11 @@
 
 This runbook explains how the WSL repo, Python virtual environment, SiliconCompiler, Docker runner, and layout viewers fit together.
 
+The SiliconCompiler flow documented here is a supporting reproducibility
+baseline. The primary project scope is RTL verification; use this flow when an
+experiment needs lint, synthesis, implementation context, or downstream
+evidence for a verification question.
+
 ## Component Model
 
 ```text
