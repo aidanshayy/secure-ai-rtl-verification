@@ -7,6 +7,7 @@ __pycache__/
 
 # SiliconCompiler and EDA output
 build/
+obj_dir/
 results/**/*.gds
 results/**/*.oas
 results/**/*.def
@@ -15,6 +16,15 @@ results/**/*.odb
 results/**/*.vcd
 results/**/*.fst
 results/**/*.log
+
+# Legacy simulator scratch/output generated inside imported design trees
+designs/**/sim/**/out/
+designs/**/sim/**/run/INCA_libs/
+designs/**/sim/**/run/*.lst
+designs/**/sim/**/run/*.args
+designs/**/sim/**/run/*.wlf
+designs/**/sim/**/run/*.mpf
+designs/**/sim/**/run/work/
 
 # Local scratch
 .DS_Store

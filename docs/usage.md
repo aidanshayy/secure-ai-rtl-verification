@@ -100,6 +100,20 @@ flows/
   <design_name>_flow.py
 ```
 
+## Run the UART with Verilator
+
+The UART is a separate verification baseline from the SiliconCompiler example:
+
+```bash
+make -C designs/uart16550/sim/verilator
+```
+
+This command uses the active files in `designs/uart16550/rtl/verilog/`, enables
+Verilator timing support for the legacy `#1` RTL delays, and runs the
+repository-owned loopback smoke test. The imported OpenCores/NCSim bench remains
+under `designs/uart16550/bench/verilog/` for reference but is not the Verilator
+entry point.
+
 For the current example, `flows/example_flow.py` declares:
 
 - design name: `tiny_counter`

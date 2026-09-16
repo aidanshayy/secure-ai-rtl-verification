@@ -10,13 +10,13 @@ production design flow.
 Phase 0 - Establish a reproducible RTL-verification baseline and define the
 interfaces between verification tools, AI agents, and protected design data.
 
-The repository currently contains a small example design, setup scripts,
-environment checks, a minimal SiliconCompiler RTL-to-GDSII flow, and operating
-documentation. The full RTL-to-GDSII flow is a supporting baseline for learning
-and for studying downstream effects of RTL decisions; it is not the primary
-scope of the project. The repository does not yet implement a complete AI
-integration, policy harness, formal-verification research system, or cloud
-service.
+The repository currently contains small RTL examples, an imported UART 16550
+baseline, a Verilator smoke test, setup scripts, environment checks, a minimal
+SiliconCompiler RTL-to-GDSII flow, and operating documentation. The full
+RTL-to-GDSII flow is a supporting baseline for learning and for studying
+downstream effects of RTL decisions; it is not the primary scope of the
+project. The repository does not yet implement a complete AI integration,
+policy harness, formal-verification research system, or cloud service.
 
 See [AGENTS.md](AGENTS.md) for guidance intended for Codex and other agents
 working in this repository.
@@ -60,6 +60,10 @@ Research areas may include:
 │   ├── setup.sh
 │   └── check_environment.sh
 ├── designs/
+│   ├── D_Flip_Flop/
+│   ├── mux2/
+│   ├── uart16550/
+│   │   └── sim/verilator/
 │   └── example/
 ├── flows/
 │   └── example_flow.py
@@ -118,6 +122,21 @@ PATH="$PWD/.sc-tools/bin:$PWD/.sc-tools/oss-cad-suite/bin:$PATH" .venv/bin/pytho
 The flow uses SiliconCompiler `0.38.2`, FreePDK45/Nangate45 via `lambdapdk`, and a tiny synthesizable counter design.
 
 SiliconCompiler writes logs, reports, manifests, intermediate artifacts, metrics, and final layout output under `build/`. Start by inspecting `build/tiny_counter/job0/` after a run. The Docker-validated example produces `build/tiny_counter/job0/write.gds/0/outputs/tiny_counter.gds.gz`.
+
+## Run the UART Verilator baseline
+
+The active UART RTL is under `designs/uart16550/rtl/verilog/`. The original
+OpenCores bench is preserved as reference collateral, while the repository's
+Verilator entry point is a small, timing-aware Wishbone/serial loopback smoke
+test:
+
+```bash
+make -C designs/uart16550/sim/verilator
+```
+
+The test builds and runs under `build/uart16550/verilator/`, which is generated
+output and is ignored by Git. See [designs/uart16550/README.md](designs/uart16550/README.md)
+for the source boundaries and legacy-bench notes.
 
 ## Operating Notes
 

@@ -1,8 +1,12 @@
 # Validation Log
 
-Date: 2026-08-25
+Date: 2026-09-16
 
 ## Completed
+
+- Added and ran the timing-aware UART 16550 Verilator smoke test.
+- Verified Wishbone register writes, divisor setup, serial loopback, receive
+  status, and received data (`0x5a`) with the active UART RTL.
 
 - Created a Python virtual environment in `.venv/`.
 - Installed `siliconcompiler==0.38.2`.
