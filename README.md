@@ -11,7 +11,7 @@ Phase 0 - Establish a reproducible RTL-verification baseline and define the
 interfaces between verification tools, AI agents, and protected design data.
 
 The repository currently contains small RTL examples, an imported UART 16550
-baseline, a Verilator smoke test, setup scripts, environment checks, a minimal
+baseline, reusable Verilator simulation commands, setup scripts, environment checks, a minimal
 SiliconCompiler RTL-to-GDSII flow, and operating documentation. The full
 RTL-to-GDSII flow is a supporting baseline for learning and for studying
 downstream effects of RTL decisions; it is not the primary scope of the
@@ -58,20 +58,24 @@ Research areas may include:
 ├── requirements.txt
 ├── scripts/
 │   ├── setup.sh
-│   └── check_environment.sh
+│   ├── check_environment.sh
+│   └── run_verilator.sh
 ├── designs/
 │   ├── D_Flip_Flop/
+│   │   └── sim/verilator/       # runnable example configuration
 │   ├── mux2/
 │   ├── uart16550/
-│   │   └── sim/verilator/
-│   └── example/
+│   │   ├── rtl/verilog/         # active imported RTL
+│   │   └── sim/verilator/       # UART smoke test configuration
+│   └── ...                       # add new designs here
 ├── flows/
 │   └── example_flow.py
-├── results/
+├── build/                       # generated, ignored simulation/EDA output
 └── docs/
     ├── environment.md
     ├── research_direction.md
     ├── scope.md
+    ├── simulations.md
     ├── usage.md
     └── validation.md
 ```
@@ -103,7 +107,39 @@ docker run --rm ghcr.io/siliconcompiler/sc_runner:v0.38.2 openroad -version
 
 This verifies Python, SiliconCompiler import/version, executable discovery, Verilator lint, and Yosys synthesis for the example RTL.
 
-## Run The Example Flow
+## Run RTL simulations
+
+RTL simulation is the recommended starting point. The reusable runner takes a
+testbench top, testbench file, and one or more RTL files:
+
+```bash
+./scripts/run_verilator.sh --top tb \
+  --tb designs/D_Flip_Flop/tb_DFlipFlop.sv \
+  --rtl designs/D_Flip_Flop/DFlipFlop.sv \
+  --build-dir build/D_Flip_Flop/verilator
+```
+
+Use `--lint-only` for a fast compile/elaboration check or `--coverage` to
+instrument the run. See [docs/simulations.md](docs/simulations.md) for include
+paths, waveforms, coverage reports, and configuring multi-file designs.
+
+The same example has a design-local interface:
+
+```bash
+make -C designs/D_Flip_Flop/sim/verilator run
+make -C designs/D_Flip_Flop/sim/verilator coverage
+```
+
+The UART baseline is also directly runnable:
+
+```bash
+make -C designs/uart16550/sim/verilator
+make -C designs/uart16550/sim/verilator coverage
+```
+
+Outputs stay under `build/`, keeping design source directories clean.
+
+## Run the optional SiliconCompiler flow
 
 Run through the Docker scheduler:
 
@@ -142,6 +178,7 @@ for the source boundaries and legacy-bench notes.
 
 See `docs/usage.md` for command recipes covering:
 
+- the RTL-first Verilator workflow
 - running the Docker-backed flow
 - inspecting build outputs
 - opening GDS in native WSL KLayout

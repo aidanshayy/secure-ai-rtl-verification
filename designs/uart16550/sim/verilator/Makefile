@@ -12,7 +12,7 @@ VERILATOR_FLAGS := --binary --timing --language 1800-2012 -Wall -Wno-fatal \
 	-Wno-IMPLICIT -Wno-TIMESCALEMOD -Wno-DEFPARAM -Wno-WIDTHEXPAND \
 	-Wno-UNUSEDSIGNAL -Wno-CASEX -Wno-BLKSEQ -Wno-PROCASSINIT
 
-.PHONY: all lint run clean
+.PHONY: all lint run coverage trace clean
 
 all: run
 
@@ -30,6 +30,17 @@ $(BIN): $(RTL) $(TB)
 
 run: $(BIN)
 	$(BIN)
+
+coverage:
+	$(ROOT)/scripts/run_verilator.sh --top uart_smoke_tb --tb $(ROOT)/designs/uart16550/sim/verilator/$(TB) \
+		--include $(RTL_DIR) $(foreach file,$(RTL),--rtl $(file)) \
+		--build-dir $(BUILD_DIR)/coverage --coverage
+
+trace:
+	@echo "Trace support requires a testbench with $$dumpfile/$$dumpvars."
+	$(VERILATOR) $(VERILATOR_FLAGS) --trace -I$(RTL_DIR) --top-module uart_smoke_tb \
+		--Mdir $(BUILD_DIR)/trace/obj $(RTL) $(TB)
+	$(BUILD_DIR)/trace/obj/Vuart_smoke_tb
 
 clean:
 	rm -rf $(BUILD_DIR)

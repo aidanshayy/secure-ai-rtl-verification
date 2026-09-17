@@ -1,6 +1,8 @@
 # Usage Runbook
 
-This runbook explains how the WSL repo, Python virtual environment, SiliconCompiler, Docker runner, and layout viewers fit together.
+This runbook explains the RTL-first simulation workflow and, separately, how
+the WSL repo, Python virtual environment, SiliconCompiler, Docker runner, and
+layout viewers fit together.
 
 The SiliconCompiler flow documented here is a supporting reproducibility
 baseline. The primary project scope is RTL verification; use this flow when an
@@ -86,19 +88,52 @@ This command means:
 
 ## Run A Different RTL Design
 
-For a new design, keep source inputs in the repo and update the flow recipe.
+For a new design, keep source inputs in the repo and add the simulator entry
+point next to the testbench. This keeps RTL, verification collateral, and
+generated output separate:
 
 Recommended layout:
 
 ```text
 designs/<design_name>/
-  rtl files
-  constraints
-  notes
+  rtl/                         # active RTL and include files
+  tb/                          # repository-owned testbenches/assertions
+  sim/verilator/Makefile       # repeatable local configuration
+  README.md                    # source boundaries and assumptions
+  constraints/                 # only when a downstream flow needs them
+
+build/<design_name>/           # generated binaries, logs, waves, coverage
 
 flows/
-  <design_name>_flow.py
+  <design_name>_flow.py        # optional SiliconCompiler flow
 ```
+
+Start with the Verilator command in [simulations.md](simulations.md). Add a
+SiliconCompiler flow only when synthesis or implementation evidence is needed
+for the verification experiment.
+
+## Run RTL simulations with Verilator
+
+Read [simulations.md](simulations.md) for the complete Verilator configuration
+and coverage guide. The shortest examples are:
+
+```bash
+make -C designs/D_Flip_Flop/sim/verilator run
+make -C designs/D_Flip_Flop/sim/verilator coverage
+```
+
+The reusable runner can also be configured directly for any design:
+
+```bash
+./scripts/run_verilator.sh --top <testbench_top> \
+  --tb designs/<design>/<testbench>.sv \
+  --rtl designs/<design>/<rtl>.sv \
+  --build-dir build/<design>/verilator
+```
+
+Repeat `--rtl` for multi-file designs and add `--include <dir>` for Verilog
+include directories. Use `--lint-only` before a run and `--coverage` when the
+experiment needs Verilator coverage output.
 
 ## Run the UART with Verilator
 

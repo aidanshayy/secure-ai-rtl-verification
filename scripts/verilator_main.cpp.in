@@ -1,0 +1,24 @@
+#include "verilated.h"
+#include "verilated_cov.h"
+#include "@TOP@.h"
+
+int main(int argc, char** argv) {
+    VerilatedContext* contextp = new VerilatedContext;
+    contextp->commandArgs(argc, argv);
+    @TOP@* top = new @TOP@(contextp);
+
+    while (!contextp->gotFinish()) {
+        top->eval();
+        if (top->eventsPending()) {
+            contextp->time(top->nextTimeSlot());
+        } else {
+            break;
+        }
+    }
+
+    top->final();
+    contextp->coveragep()->write("coverage.dat");
+    delete top;
+    delete contextp;
+    return 0;
+}
